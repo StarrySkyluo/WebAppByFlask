@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}用户注册{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1>用户注册</h1>
+    
+    <!-- 显示错误消息 -->
+    {% if error %}
+    <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+    
+    <form method="POST" action="{{ url_for('register') }}" class="form">
+        <div class="form-group">
+            <label for="username">用户名：</label>
+            <input type="text" id="username" name="username" 
+                   value="{{ username if username else '' }}" 
+                   required placeholder="请输入用户名">
+        </div>
+        
+        <div class="form-group">
+            <label for="password">密码：</label>
+            <input type="password" id="password" name="password" 
+                   required placeholder="请输入6位以上由字母和数字合成的密码">
+        </div>
+        
+        <div class="form-group">
+            <label for="confirm_password">确认密码：</label>
+            <input type="password" id="confirm_password" name="confirm_password" 
+                   required placeholder="请再次输入密码">
+        </div>
+        
+        <div class="form-group">
+            <label for="phone">手机号：</label>
+            <input type="tel" id="phone" name="phone" 
+                   value="{{ phone if phone else '' }}" 
+                   required placeholder="请输入1开头的11位手机号" 
+                   pattern="1[0-9]{10}" maxlength="11">
+        </div>
+        
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">注册</button>
+        </div>
+    </form>
+    
+    <div class="form-footer">
+        <p>已有账号？<a href="{{ url_for('login') }}">立即登录</a></p>
+    </div>
+</div>
+{% endblock %}

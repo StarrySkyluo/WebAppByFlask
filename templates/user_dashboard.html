@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}用户中心{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>欢迎，{{ username }}！</h1>
+        <a href="{{ url_for('logout') }}" class="btn btn-secondary">退出登录</a>
+    </div>
+    
+    <div class="dashboard-content">
+        <h2>我的日记</h2>
+        
+        <!-- 显示错误消息 -->
+        {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+        {% endif %}
+        
+        <!-- 日记表格展示 -->
+        {% if diaries %}
+        <div class="table-container">
+            <table class="diary-table">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>日记内容</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for diary in diaries %}
+                    <tr>
+                        <td>{{ diary.id }}</td>
+                        <td class="diary-content">{{ diary.diary }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-message">
+            <p>暂无日记，快来写下你的第一篇日记吧！</p>
+        </div>
+        {% endif %}
+        
+        <!-- 提交日记表单 -->
+        <div class="diary-form-container">
+            <h3>写日记</h3>
+            <form method="POST" action="{{ url_for('add_diary') }}" class="diary-form">
+                <div class="form-group">
+                    <label for="diary">日记内容：</label>
+                    <textarea id="diary" name="diary" 
+                              rows="5" 
+                              required 
+                              placeholder="在这里写下你的心情和想法..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">提交日记</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

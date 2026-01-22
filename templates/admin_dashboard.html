@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}管理员界面{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>管理员界面</h1>
+        <a href="{{ url_for('logout') }}" class="btn btn-secondary">退出登录</a>
+    </div>
+    
+    <div class="dashboard-content">
+        <h2>用户管理</h2>
+        
+        {% if users %}
+        <div class="table-container">
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>用户名</th>
+                        <th>密码</th>
+                        <th>手机号</th>
+                        <th>操作</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.password }}</td>
+                        <td>{{ user.phone }}</td>
+                        <td>
+                            <button class="btn btn-danger btn-small" 
+                                    onclick="deleteUser('{{ user.username }}')">
+                                删除
+                            </button>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('edit_user', username=user.username) }}" 
+                               class="btn btn-warning btn-small">
+                                修改
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-message">
+            <p>暂无用户数据</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- 删除用户的表单（隐藏） -->
+<form id="deleteForm" method="POST" action="{{ url_for('delete_user') }}" style="display: none;">
+    <input type="hidden" name="username" id="deleteUsername">
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+/**
+ * 删除用户功能
+ * 参数: username - 要删除的用户名
+ */
+function deleteUser(username) {
+    // 确认删除操作
+    if (confirm('确定要删除用户 "' + username + '" 吗？\n删除后将同时删除该用户的所有日记数据！')) {
+        // 设置要删除的用户名
+        document.getElementById('deleteUsername').value = username;
+        
+        // 创建表单数据
+        const formData = new FormData(document.getElementById('deleteForm'));
+        
+        // 发送POST请求
+        fetch('{{ url_for("delete_user") }}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // 删除成功，显示提示并刷新页面
+                alert('删除成功！');
+                window.location.reload();
+            } else {
+                // 删除失败，显示错误信息
+                alert('删除失败：' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('删除失败，请稍后重试！');
+        });
+    }
+}
+</script>
+{% endblock %}
